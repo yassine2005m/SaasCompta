@@ -1,15 +1,29 @@
 #!/bin/bash
+set -e
 
-# Generer la cle de l'application si elle n'existe pas
+echo "======================================="
+echo " DEMARRAGE - Universal Invest Strategy"
+echo "======================================="
+
+# Lien symbolique pour le stockage public
+php artisan storage:link || true
+
+# Vider tout le cache (important en production)
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+# Generer la cle si absente
 php artisan key:generate --force
 
-# Nettoyer et mettre en cache la configuration
+# Mettre en cache pour la production
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Exectuer les migrations de la base de donnees (forcer en production)
-php artisan migrate --force
+# Migrer la base de donnees
+echo "Migration de la base de donnees..."
+php artisan migrate --force --no-interaction
 
-# Lancer Apache en arriere-plan (Foreground)
+echo "Application prete ! Demarrage Apache..."
 apache2-foreground
