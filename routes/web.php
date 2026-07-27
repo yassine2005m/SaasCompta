@@ -32,8 +32,10 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-// Public API Route for Sage Desktop Sync (protected by token)
+// Public API Routes for Sage Desktop Sync (protected by token)
 Route::get('/api/sage-sync', [ExportController::class, 'apiSageSync'])->name('api.sync');
+Route::post('/api/sage-sync/ack', [ExportController::class, 'apiSyncAck'])->name('api.sync.ack');
+Route::get('/api/sage-sync/status', [ExportController::class, 'apiSyncStatus'])->name('api.sync.status');
 
 Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
@@ -60,6 +62,7 @@ Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
         Route::get('/', [AdminClientController::class, 'index'])->name('index');
         Route::get('/{id}', [AdminClientController::class, 'show'])->name('show');
         Route::put('/{id}', [AdminClientController::class, 'update'])->name('update');
+        Route::delete('/{id}', [AdminClientController::class, 'destroy'])->name('destroy');
         Route::get('/{id}/attachments/{type}', [AdminAttachmentController::class, 'clientRegistrationAttachment'])
             ->whereIn('type', ['cin', 'company_doc'])
             ->name('attachment');

@@ -44,7 +44,16 @@
                             <td>{{ $client->company->company_name ?? '-' }}</td>
                             <td>{{ $client->contracts->count() }}</td>
                             <td>
-                                <a href="{{ route('clients.show', $client->id) }}" class="btn btn-sm btn-outline-primary">Voir details</a>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ route('clients.show', $client->id) }}" class="btn btn-sm btn-outline-primary">Voir details</a>
+                                    <form action="{{ route('clients.destroy', $client->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce client et toutes ses données associées (contrats, factures, etc.) ?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                            <i class="fas fa-trash"></i> Supprimer
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

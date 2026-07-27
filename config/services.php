@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'sage' => [
+        'sync_token' => env('SAGE_SYNC_TOKEN', 'sage_sync_protected_token_2026'),
+    ],
+
 ];

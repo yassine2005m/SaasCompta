@@ -52,4 +52,12 @@ class AdminClientController extends Controller
 
         return redirect()->back()->with('success', 'ID Sage mis à jour avec succès.');
     }
+
+    public function destroy($id)
+    {
+        $client = Client::findOrFail($id);
+        $client->delete();
+
+        return redirect()->route('clients.index')->with('success', 'Client supprimé avec succès.');
+    }
 }

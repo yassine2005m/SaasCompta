@@ -185,4 +185,75 @@ class ExportController extends Controller
         return response($this->sageService->generateSageContent())
             ->header('Content-Type', 'text/plain; charset=windows-1252');
     }
+
+    /**
+     * API: Acknowledge sync from Cloud Agent (Token Protected)
+     */
+    public function apiSyncAck(Request $request)
+    {
+        $token = $request->query('token');
+        $validToken = config('services.sage.sync_token', env('SAGE_SYNC_TOKEN', 'sage_sync_protected_token_2026'));
+
+        if ($token !== $validToken) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        // Store last sync info in a simple file (no extra DB table needed)
+        $syncInfo = [
+            'last_sync_at' => now()->toDateTimeString(),
+            'agent_ip' => $request->ip(),
+            'entries_size' => $request->query('entries', 0),
+            'status' => 'success'
+        ];
+
+        $syncLogPath = storage_path('app/sage_sync_log.json');
+        
+        // Load existing logs
+        $logs = [];
+        if (file_exists($syncLogPath)) {
+            $logs = json_decode(file_get_contents($syncLogPath), true) ?? [];
+        }
+        
+        // Keep only last 50 sync entries
+        $logs[] = $syncInfo;
+        if (count($logs) > 50) {
+            $logs = array_slice($logs, -50);
+        }
+        
+        file_put_contents($syncLogPath, json_encode($logs, JSON_PRETTY_PRINT));
+
+        return response()->json(['status' => 'ok', 'message' => 'Sync acknowledged']);
+    }
+
+    /**
+     * API: Get last sync status (for dashboard display)
+     */
+    public function apiSyncStatus(Request $request)
+    {
+        $token = $request->query('token');
+        $validToken = config('services.sage.sync_token', env('SAGE_SYNC_TOKEN', 'sage_sync_protected_token_2026'));
+
+        if ($token !== $validToken) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $syncLogPath = storage_path('app/sage_sync_log.json');
+        
+        if (!file_exists($syncLogPath)) {
+            return response()->json([
+                'last_sync' => null,
+                'total_syncs' => 0,
+                'message' => 'Aucune synchronisation enregistrée'
+            ]);
+        }
+
+        $logs = json_decode(file_get_contents($syncLogPath), true) ?? [];
+        $lastSync = end($logs);
+
+        return response()->json([
+            'last_sync' => $lastSync,
+            'total_syncs' => count($logs),
+            'message' => 'OK'
+        ]);
+    }
 }

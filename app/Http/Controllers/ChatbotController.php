@@ -31,42 +31,46 @@ class ChatbotController extends Controller
     private function getExpertResponse($text)
     {
         // 1. GREETINGS
-        if (Str::contains($text, ['bonjour', 'salut', 'hello'])) {
-            return "Bonjour ! Je suis l'expert technique d'Universal Invest Strategy. Comment puis-je vous aider avec la gestion de vos contrats ou de votre comptabilité aujourd'hui ?";
+        if (Str::contains($text, ['bonjour', 'salut', 'hello', 'coucou'])) {
+            return "Bonjour ! Je suis l'assistant virtuel d'Universal Invest Strategy. Je peux vous aider avec la gestion de vos contrats, de la facturation, de la synchronisation Sage et de la domiciliation. Que souhaitez-vous savoir ?";
         }
 
-        // 2. CONTRACTS LOGIC
-        if (Str::contains($text, ['contrat', 'calcul', 'droit', 'consomme', 'surplus'])) {
-            if (Str::contains($text, ['surplus'])) {
-                return "Le surplus est calculé ainsi : [Réel/J] - [Droit Consommé]. Cela représente les jours d'occupation dépassant la durée initiale prévue au contrat.";
-            }
-            if (Str::contains($text, ['droit'])) {
-                return "Le 'Droit Consommé' est la durée totale prévue du contrat (Date Fin - Date Début).";
-            }
-            return "Dans la gestion des contrats, nous suivons : 1. Droit Consommé (durée prévue), 2. Réel/J (jours écoulés après échéance), 3. Valeur HT (calclulée à 165 DH/mois si non saisie).";
+        // 2. CREATION DE CONTRAT & PROCESSUS
+        if (Str::contains($text, ['créer un contrat', 'nouveau contrat', 'faire un contrat', 'demande'])) {
+            return "Pour créer un contrat : \n1. Si vous êtes client, allez dans 'Faire une demande'. \n2. Si vous êtes admin, allez dans 'Contrats > Créer' ou validez une demande client en attente. \nLe document sera automatiquement généré en PDF et Word avec les bons textes et le design officiel de M. Bachra.";
         }
 
-        // 3. ACCOUNTING / JOURNAL
-        if (Str::contains($text, ['comptabilité', 'journal', 'compte', '3421', '7121', 'vendes'])) {
-            return "Pour la comptabilité, nous utilisons principalement deux comptes : le compte 3421 (Clients) et le compte 7121 (Ventes de services). Vous pouvez consulter l'équilibre Débit/Crédit dans le Journal des Ventes.";
+        // 3. RENOUVELLEMENT & EXPIRATION
+        if (Str::contains($text, ['renouveler', 'renouvellement', 'expire', 'expiration', 'fin'])) {
+            return "Lorsqu'un contrat approche de sa fin, l'admin peut cliquer sur le bouton 'Renouveler' sur la page du contrat. Cela créera un nouveau contrat avec de nouvelles dates (généralement +1 an) et générera la facture correspondante.";
         }
 
-        // 4. SAGE EXPORT
-        if (Str::contains($text, ['sage', 'export', 'import', 'synchronisation'])) {
-            return "L'export Sage génère automatiquement des fichiers TXT formatés pour Sage 100 dans le dossier 'C:\Sage_Import'. La synchronisation peut être déclenchée manuellement depuis la page Export.";
+        // 4. FACTURATION ET PRIX
+        if (Str::contains($text, ['prix', 'tarif', 'coût', 'combien', '165', 'facture', 'payer', 'payée'])) {
+            return "Le tarif standard de la domiciliation est de 165 DH par mois. Les factures sont générées automatiquement à la création ou au renouvellement du contrat. Vous pouvez changer leur statut en 'Payée' depuis l'onglet Factures.";
         }
 
-        // 5. INVOICES
-        if (Str::contains($text, ['facture', 'pdf', 'email', 'payer', 'payée'])) {
-            return "Vous pouvez générer des factures PDF, les envoyer par email aux clients et suivre leur statut (En attente / Payée) directement depuis le module Facturation.";
+        // 5. SYNCHRONISATION SAGE 100
+        if (Str::contains($text, ['sage', 'synchroniser', 'export', 'comptabilité', 'journal'])) {
+            return "L'intégration avec Sage 100 est 100% locale. L'export Sage génère automatiquement des fichiers TXT formatés (PNM) dans le dossier 'C:\Sage_Import'. Allez dans 'Export Sage' pour lancer la synchronisation directe ou télécharger les journaux Excel.";
         }
 
-        // 6. CLIENTS
-        if (Str::contains($text, ['client', 'société', 'ice', 'entreprise'])) {
-            return "Le système permet de gérer les fiches clients avec leurs informations légales (ICE, Registre du Commerce) et de lier chaque client à un ou plusieurs contrats de domiciliation.";
+        // 6. DOCUMENTS ET ATTESTATION
+        if (Str::contains($text, ['attestation', 'pdf', 'word', 'télécharger', 'document', 'imprimer'])) {
+            return "Les attestations de domiciliation et les contrats sont générés dynamiquement. Allez sur la page d'un contrat, et vous verrez les boutons pour télécharger la version PDF ou Word. Le format respecte le modèle officiel.";
         }
 
-        // DEFAULT RESPONSE (RESTRICTED TO PROJECT)
-        return "Désolé, je suis programmé pour répondre uniquement aux questions concernant la plateforme Universal Invest Strategy (Contrats, Factures, Comptabilité, Sage). Pouvez-vous préciser votre question sur l'un de ces sujets ?";
+        // 7. GESTION DES CLIENTS
+        if (Str::contains($text, ['client', 'ice', 'entreprise', 'rc', 'if', 'supprimer client'])) {
+            return "La section 'Clients' permet de voir tous les domiciliés. Vous y trouverez leurs numéros légaux (ICE, RC, IF) liés à leur entreprise. Vous pouvez également supprimer un client (ce qui supprimera ses factures et contrats).";
+        }
+
+        // 8. LIVRAISON DU PROJET & UTILISATION LOCALE
+        if (Str::contains($text, ['livrer', 'livraison', 'déployer', 'local', 'installation', 'demarrer'])) {
+            return "Puisque l'automatisation Sage est locale (C:\Sage_Import), le projet peut être utilisé facilement avec un script de démarrage (ex: start_saas.bat) fourni par votre développeur. Il lance le serveur localement et ouvre l'application dans votre navigateur sans besoin de cloud !";
+        }
+
+        // DEFAULT RESPONSE
+        return "Désolé, je ne suis pas sûr d'avoir bien compris. Je suis programmé pour répondre aux questions sur : les contrats, les factures, la tarification (165 DH/mois), l'exportation Sage 100, et la gestion des clients. Pouvez-vous reformuler votre question sur l'un de ces sujets ?";
     }
 }

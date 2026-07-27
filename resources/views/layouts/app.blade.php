@@ -348,6 +348,33 @@
             background: var(--primary-hover);
         }
 
+        /* Suggested Questions */
+        .chatbot-suggestions {
+            padding: 10px 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #f8fafc;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .suggestion-btn {
+            background: white;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .suggestion-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
         /* Mobile Adjustments */
         @media (max-width: 480px) {
             .chatbot-window {
@@ -419,6 +446,13 @@
                     Bonjour ! Je suis l'assistant Universal Invest Strategy. Comment puis-je vous aider aujourd'hui avec votre comptabilité ?
                 </div>
             </div>
+            <div class="chatbot-suggestions" id="chatbot-suggestions">
+                <button class="suggestion-btn" onclick="sendSuggestedMsg('Comment créer un contrat ?')">Créer un contrat</button>
+                <button class="suggestion-btn" onclick="sendSuggestedMsg('Comment renouveler un contrat ?')">Renouvellement</button>
+                <button class="suggestion-btn" onclick="sendSuggestedMsg('Quel est le prix ?')">Tarifs</button>
+                <button class="suggestion-btn" onclick="sendSuggestedMsg('Comment exporter vers Sage ?')">Export Sage</button>
+                <button class="suggestion-btn" onclick="sendSuggestedMsg('Où télécharger le contrat PDF ?')">Télécharger PDF</button>
+            </div>
             <div class="chatbot-input">
                 <input type="text" id="chatbot-input-field" placeholder="Écrivez votre message...">
                 <button id="chatbot-send-btn">
@@ -456,13 +490,16 @@
             });
 
             // Send Message Function
-            async function sendMessage() {
-                const text = inputField.value.trim();
+            async function sendMessage(textOverride = null) {
+                const text = textOverride || inputField.value.trim();
                 if (text === '') return;
 
                 // Add User Message
                 addMessage(text, 'user');
-                inputField.value = '';
+                if (!textOverride) inputField.value = '';
+
+                // Hide suggestions after first message to save space
+                document.getElementById('chatbot-suggestions').style.display = 'none';
 
                 // Add Typing Indicator
                 const typingDiv = document.createElement('div');
@@ -494,15 +531,19 @@
             function addMessage(text, type) {
                 const msgDiv = document.createElement('div');
                 msgDiv.classList.add('message', type);
-                msgDiv.innerText = text;
+                // Convert \n to <br> for proper formatting
+                msgDiv.innerHTML = text.replace(/\n/g, '<br>');
                 messagesContainer.appendChild(msgDiv);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
 
-            sendBtn.addEventListener('click', sendMessage);
+            sendBtn.addEventListener('click', () => sendMessage());
             inputField.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') sendMessage();
             });
+
+            // Make it globally available for the onclick handlers
+            window.sendSuggestedMsg = sendMessage;
         });
     </script>
 

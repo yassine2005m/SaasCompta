@@ -70,11 +70,6 @@
                         <input type="text" class="form-control company-field @error('rc') is-invalid @enderror" name="rc" value="{{ old('rc', $company->rc ?? '') }}">
                         @error('rc')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">RCE</label>
-                        <input type="text" class="form-control company-field @error('rce') is-invalid @enderror" name="rce" value="{{ old('rce', $company->rce ?? '') }}">
-                        @error('rce')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
                     <div class="col-md-4">
                         <label class="form-label">ICE</label>
                         <input type="text" class="form-control company-field @error('ice') is-invalid @enderror" name="ice" value="{{ old('ice', $company->ice ?? '') }}">
@@ -84,11 +79,6 @@
                         <label class="form-label">IF</label>
                         <input type="text" class="form-control company-field @error('if') is-invalid @enderror" name="if" value="{{ old('if', $company->if ?? '') }}">
                         @error('if')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Forme juridique</label>
-                        <input type="text" class="form-control @error('legal_form') is-invalid @enderror" name="legal_form" value="{{ old('legal_form', $company->legal_form ?? '') }}">
-                        @error('legal_form')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Activite</label>
@@ -107,9 +97,7 @@
                         <label class="form-label">Type de contrat</label>
                         <select class="form-select @error('contract_type') is-invalid @enderror" name="contract_type" required>
                             <option value="">Selectionnez...</option>
-                            <option value="Domiciliation" {{ old('contract_type') === 'Domiciliation' ? 'selected' : '' }}>Domiciliation Juridique</option>
-                            <option value="Basic Accounting" {{ old('contract_type') === 'Basic Accounting' ? 'selected' : '' }}>Tenue de Comptabilite</option>
-                            <option value="Consulting" {{ old('contract_type') === 'Consulting' ? 'selected' : '' }}>Conseil Juridique</option>
+                            <option value="Domiciliation" {{ old('contract_type') === 'Domiciliation' ? 'selected' : '' }}>Domiciliation</option>
                         </select>
                         @error('contract_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
@@ -132,20 +120,6 @@
                         <label class="form-label">Certificat Negatif</label>
                         <input type="file" class="form-control @error('certificat_file') is-invalid @enderror" name="certificat_file">
                         @error('certificat_file')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-                <div class="row g-3 mt-4">
-                    <div class="col-12">
-                        <div class="p-4 rounded-3 border bg-light d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1 fw-bold text-dark">Estimation du Prix</h6>
-                                <p class="text-secondary small mb-0">Basé sur le tarif standard de 800 DH / an (66.67 DH/mois)</p>
-                            </div>
-                            <div class="text-end">
-                                <div class="h3 mb-0 fw-bold text-primary" id="pricePreview">0.00 DH</div>
-                                <small class="text-secondary">Hors Taxes</small>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
