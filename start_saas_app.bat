@@ -115,7 +115,14 @@ echo [+] Dependances installees avec succes.
 :: =========================================================
 
 echo [+] Verification de la base de donnees...
-php auto_setup_db.php
+if not exist "%~dp0setup_mysql.php" (
+    powershell -NoProfile -Command "$c=@'
+<?php
+$host='127.0.0.1';$port=3306;$user='root';$pass='';$dbname='saas_accounting';
+try{$pdo=new PDO(\"mysql:host={$host};port={$port}\",$user,$pass);$pdo->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);$pdo->exec(\"CREATE DATABASE IF NOT EXISTS ``{$dbname}`` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci\");echo \"[+] Base prete\".PHP_EOL;exit(0);}catch(Throwable $e){echo $e->getMessage().PHP_EOL;exit(1);}
+'@; Set-Content -LiteralPath '%~dp0setup_mysql.php' -Value $c -Encoding UTF8"
+)
+php setup_mysql.php
 if %errorlevel% neq 0 (
     echo.
     echo SOLUTION : Ouvrez Laragon et cliquez sur "Start All" puis relancez.
